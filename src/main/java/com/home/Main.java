@@ -59,6 +59,17 @@ public class Main {
             System.out.println("Enter a keyword to search: ");
             newsSearch = scanner.nextLine();
 
+            if (newsSearch.equals("exit")) {
+                System.out.println("\nExiting Program....");
+                break;
+            }
+
+            if (newsSearch.isBlank()) {
+                System.out.println("ERROR! News search cannot be blank!");
+                continue;
+                
+            }
+
             try {
                 
                 URI newsURI = new URI(buildAPIUrl(newsSearch));
@@ -131,8 +142,12 @@ public class Main {
     JSONObject zeroObject = articleArr.getJSONObject(0);
         
     String title_0 = zeroObject.getString("title");
+    String author_0 = zeroObject.getString("author");
+    String description_0 = zeroObject.getString("description");
 
-    System.out.println("Title: " + title_0);
+    System.out.println("\nTitle: " + title_0);
+    System.out.println("\nAuthor: " + author_0);
+    System.out.println("\n" + description_0 + "\n");
 
     }
 }
