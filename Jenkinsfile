@@ -2,38 +2,42 @@ pipeline{
     agent any
 
     stages{
-
-        stage('Checkout') {
+        stage('Checkout'){
             steps{
-                sh 'mvn clean compile'
+                checkout scm
             }
         }
 
-        stage('Test') {
-            steps {
+        stage('Build'){
+            steps{
+                sh 'mvn build'
+            }
+        }
+
+        stage('Test'){
+            steps{
                 sh 'mvn test'
             }
         }
 
-        stage ('Package') {
-            steps {
+        stage('Package'){
+            steps{
                 sh 'mvn package'
             }
         }
     }
 
-    post {
+    post{
         always{
-            archiveArtifacts: 'target/*.jar, fingerprint: true'
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
         }
 
-        success {
+        success{
             echo 'Build Successful'
         }
 
         failure{
-            echo 'Build Failed'
+            echo "Build Failed"
         }
     }
-    
 }
