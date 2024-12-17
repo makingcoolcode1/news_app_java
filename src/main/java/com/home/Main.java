@@ -1,153 +1,115 @@
 
 package com.home;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.util.Scanner;
-
-import javax.print.DocFlavor.URL;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class Main {
 
-    public static String mainURL = "https://newsapi.org";
-
-    public static String apiKey;
-    public static String newsSearch;
+    public static String apikey;
+    public static String apiURL = "https://newsapi.org/v2/everything";
 
     public static void main(String[] args) {
 
-        System.out.println("\n**Welcome to the news app");
-        System.out.println("\nTo begin, you must subscribe to an API key from https://newsapi.org/");
-        
         Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("\nWelcome to the news app!");
+        System.out.println("To access the app, you must have an API key from newsapi.org");
 
-        boolean keyIsValid = false;
+        boolean keyValid = false;
 
-        while (!keyIsValid) {
+        while (!keyValid) {
 
-            System.out.println("\nPlease Enter your API Key:");
+            System.out.println("\nPlease enter your API key: ");
 
-            apiKey = scanner.nextLine();
+            apikey = scanner.nextLine();
 
-            if (apiKey.equals("exit")) {
-                System.out.println("\nExiting Program");
-                break; 
+            if (apikey.equals("exit")) {
+                System.out.println("Exiting Program....");
+                System.exit(0);
             }
 
-            if (apiKey.isBlank()) {
-                System.out.println("\nERROR: API Key is required to access the application");
-                break;
-            }
-
-            if (testVerify(apiKey)) {
-                System.out.println("\nAPI KEY VALIDATED!");
-                keyIsValid = true;
-                
-            } else {
-                System.out.println("ERROR! API Key is not valid!");
-            }
-            
-        }
-
-        while (true) {
-
-            System.out.println("Enter a keyword to search: ");
-            newsSearch = scanner.nextLine();
-
-            if (newsSearch.equals("exit")) {
-                System.out.println("\nExiting Program....");
-                break;
-            }
-
-            if (newsSearch.isBlank()) {
-                System.out.println("ERROR! News search cannot be blank!");
+            if (apikey.isBlank()) {
+                System.out.println("ERROR! API key cannot be blank....");
                 continue;
-                
-            }
+            } 
 
             try {
                 
-                URI newsURI = new URI(buildAPIUrl(newsSearch));
-                java.net.URL newsURL = newsURI.toURL();
+                if (apikey.equals("clear")) {
 
-                HttpURLConnection newsConnection = (HttpURLConnection) newsURL.openConnection();
-
-                if (newsConnection.getResponseCode() == (HttpURLConnection.HTTP_OK)) {
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(newsConnection.getInputStream()));
-
-                    String line;
-
-                    StringBuffer response = new StringBuffer();
-
-                    while ((line = reader.readLine())!=null) {
-                        response.append(line);
+                    System.out.println("\nDo you want to clear the consol?(y/n)");
+                    
+                    String clearChoice = scanner.nextLine();
+    
+                    if (clearChoice.equals("y")) {
+                        clearConsol();
                         
+                        System.out.println("\nConsol Cleared!");
+                    } else if (clearChoice.equals("n")) {
+                        System.out.println("\nConsol Clear Aborted!");
+                        
+                    } else{
+                        throw new IllegalArgumentException("\nERROR! Invalid Choice!");
                     }
                     
-                    parseNewsData(response.toString());
-                    
-                } else {
-                    System.out.println("\nERROR! Unable to connect to API");
                 }
 
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
 
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
             
+            if (validateKey(apikey)) {
+                System.out.println("API KEY VALIDATED!");
+                keyValid = true;
+            } else {
+                System.out.println("\nERROR! Failed to validate API key");
+                keyValid = false;
+            }
         }
+        
     }
 
-    public static boolean testVerify(String apiKey){
+    public static void clearConsol() {
 
         try {
             
-            URI testURI = new URI(mainURL + "/v2/everything?q=bitcoin&apiKey=" + apiKey);
-            java.net.URL testURL = testURI.toURL();
+            if (System.getProperty("os.name").contains("Windows")) {
 
-            HttpURLConnection testConnect = (HttpURLConnection) testURL.openConnection();
-
-            testConnect.setRequestMethod("GET");
-
-            int testRequest = testConnect.getResponseCode();
-
-            return testRequest == 200;
-
-            
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                
+            } else {
+                System.out.print("033[H\033[2J");
+                System.out.flush();
+            }
 
         } catch (Exception e) {
-            // TODO: handle exception
-            return false;
-
+            e.printStackTrace();
         }
     }
 
+    public static boolean validateKey(String apiKey) {
 
-    public static String buildAPIUrl(String newsSearch) {
-        return String.format(mainURL + "/v2/everything?q="+ newsSearch +"&apiKey=" + apiKey);
-    }
+        try {
+            
+            URI testURI = new URI(apiURL + "?q=ravens&apiKey=" + apiKey);
+            URL testURL = testURI.toURL();
 
-    public static void parseNewsData(String  newsData){
-        
-    JSONObject json = new JSONObject(newsData);
+            HttpURLConnection testConnection = (HttpURLConnection) testURL.openConnection();
 
-    JSONArray articleArr = json.getJSONArray("articles");
+            testConnection.setRequestMethod("GET");
 
-    JSONObject zeroObject = articleArr.getJSONObject(0);
-        
-    String title_0 = zeroObject.getString("title");
-    String author_0 = zeroObject.getString("author");
-    String description_0 = zeroObject.getString("description");
+            int testReturn = testConnection.getResponseCode();
 
-    System.out.println("\nTitle: " + title_0);
-    System.out.println("\nAuthor: " + author_0);
-    System.out.println("\n" + description_0 + "\n");
+            return testReturn == 200;
 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+                return false;
     }
 }
