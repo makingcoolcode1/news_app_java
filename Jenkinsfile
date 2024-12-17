@@ -19,7 +19,7 @@ pipeline{
                 script{
                     def scannerHome = tool 'sonar_scanner_1';
                     withSonarQubeEnv(){
-                        sh "${scannerHome}/bin/sonar-scanner"
+                        sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=news_pp_cl_java -Dsonar.projectName='news_pp_cl_java'"
                     }  
                 }
             }
