@@ -36,6 +36,8 @@ public class Main {
                 continue;
             } 
 
+            boolean consolCleared = false;
+
             try {
                 
                 if (apikey.equals("clear")) {
@@ -46,6 +48,7 @@ public class Main {
     
                     if (clearChoice.equals("y")) {
                         clearConsol();
+                        consolCleared = true;
                         
                         System.out.println("\nConsol Cleared!");
                     } else if (clearChoice.equals("n")) {
@@ -61,14 +64,21 @@ public class Main {
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
-            
-            if (validateKey(apikey)) {
-                System.out.println("API KEY VALIDATED!");
-                keyValid = true;
-            } else {
-                System.out.println("\nERROR! Failed to validate API key");
-                keyValid = false;
+
+            if (!consolCleared) {
+
+                if (validateKey(apikey)) {
+                    System.out.println("API KEY VALIDATED!");
+                    keyValid = true;
+                } else {
+                    System.out.println("\nERROR! Failed to validate API key");
+                    keyValid = false;
+
+                }
+                
             }
+            
+
         }
         
     }
