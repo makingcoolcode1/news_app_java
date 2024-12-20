@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class Main {
 
     public static String apikey;
+    public static String newsSearch;
     public static String apiURL = "https://newsapi.org/v2/everything";
 
     public static void main(String[] args) {
@@ -80,6 +81,35 @@ public class Main {
             
 
         }
+
+        while (true) {
+
+            try {
+
+            System.out.println("Enter a news query: ");
+
+            newsSearch = scanner.nextLine();
+
+            if (newsSearch.equals("exit")) {
+                System.out.println("Exiting Program....");
+                System.exit(0);
+            }
+
+            if (newsSearch.isBlank()) {
+                System.out.println("ERROR! News query cannot be blank!");
+                continue;
+                
+            }
+                
+
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+
+
+
+            
+        }
         
     }
 
@@ -122,4 +152,5 @@ public class Main {
         }
                 return false;
     }
+    
 }
