@@ -1,6 +1,8 @@
 
 package com.home;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -58,6 +60,7 @@ public class Main {
                     } else{
                         throw new IllegalArgumentException("\nERROR! Invalid Choice!");
                     }
+
                     
                 }
 
@@ -67,6 +70,8 @@ public class Main {
             }
 
             if (!consolCleared) {
+
+                // Attempt to validate API kay
 
                 if (validateKey(apikey)) {
                     System.out.println("API KEY VALIDATED!");
@@ -83,9 +88,7 @@ public class Main {
         }
 
         while (true) {
-
-            try {
-
+            
             System.out.println("Enter a news query: ");
 
             newsSearch = scanner.nextLine();
@@ -100,13 +103,38 @@ public class Main {
                 continue;
                 
             }
+
+            // Search News Query
+
+            try {
                 
+                URI newsURI = new URI(apiURL + "?q=" + newsSearch + "&apiKey=" + apikey);
+                URL newsURL = newsURI.toURL();
+
+                HttpURLConnection mainConnection = (HttpURLConnection) newsURL.openConnection();
+
+                if (mainConnection.getResponseCode() == (HttpURLConnection.HTTP_OK)) {
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(mainConnection.getInputStream()));
+
+                    String line;
+
+                    StringBuffer response = new StringBuffer();
+                    
+                    while ((line = reader.readLine())!=null) {
+                        response.toString();
+                        
+                    }
+
+                    parseNewsData(response.toString());
+                    
+                }
+
+
 
             } catch (Exception e) {
                 // TODO: handle exception
             }
-
-
 
             
         }
@@ -151,6 +179,10 @@ public class Main {
             e.printStackTrace();
         }
                 return false;
+    }
+
+    public static void parseNewsData(String getData) {
+
     }
     
 }
