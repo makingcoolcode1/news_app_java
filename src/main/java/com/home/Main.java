@@ -8,6 +8,9 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Scanner;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class Main {
 
     public static String apikey;
@@ -106,9 +109,11 @@ public class Main {
 
             // Search News Query
 
+
+
             try {
                 
-                URI newsURI = new URI(apiURL + "?q=" + newsSearch + "&apiKey=" + apikey);
+                URI newsURI = new URI(buildAPIUrl(apikey));
                 URL newsURL = newsURI.toURL();
 
                 HttpURLConnection mainConnection = (HttpURLConnection) newsURL.openConnection();
@@ -122,15 +127,13 @@ public class Main {
                     StringBuffer response = new StringBuffer();
                     
                     while ((line = reader.readLine())!=null) {
-                        response.toString();
+                        response.append(line);
                         
                     }
 
                     parseNewsData(response.toString());
                     
                 }
-
-
 
             } catch (Exception e) {
                 // TODO: handle exception
@@ -181,7 +184,28 @@ public class Main {
                 return false;
     }
 
+    public static String buildAPIUrl (String apiKey) {
+            return String.format(apiURL + "?q=" + newsSearch + "&apiKey=" + apiKey);
+        
+    }
+
+
     public static void parseNewsData(String getData) {
+
+        JSONObject json = new JSONObject(getData);
+
+        JSONArray jsonarr = json.getJSONArray("articles");
+
+        JSONObject zeroOBJ = jsonarr.getJSONObject(0);
+
+        String title0 = zeroOBJ.getString("title");
+        String description0 = zeroOBJ.getString("title");
+        String url0 = zeroOBJ.getString("url");
+
+        System.out.println("\nTitle: " + title0);
+        System.out.println("\n" + description0);
+        System.out.println("\nRead More : " + url0);
+
 
     }
     
